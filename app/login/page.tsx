@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { validateCredentials, setAuthToken } from "@/lib/auth"
-import { useToast } from "@/hooks/use-toast"
+import { toast, useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const router = useRouter()
-  const { toast } = useToast()
+  const { toasts } = useToast()   // ← updated
+
 
   const handleLogin = () => {
     const user = validateCredentials(email, password)
