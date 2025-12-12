@@ -1,43 +1,14 @@
-﻿/* hooks/use-toast.ts */
-import * as React from "react"
-import { ToastActionElement, type ToastProps } from "@/components/ui/toast"
-
-type ToasterToast = ToastProps & {
-  id: string
-  title?: React.ReactNode
-  description?: React.ReactNode
-  action?: ToastActionElement
-}
-
-const TOAST_LIMIT = 1
-let count = 0
-
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER
-  return count.toString()
-}
-
-const toastListeners = new Set<(toast: ToasterToast) => void>()
-
-export function toast(props: ToastProps) {
-  const newToast: ToasterToast = { id: genId(), ...props }
-  toastListeners.forEach((listener) => listener(newToast))
-  return newToast
-}
+﻿"use client"
+import { useState } from "react"
+import { ToastProps } from "@/components/ui/toast"
 
 export function useToast() {
-  const [toasts, setToasts] = React.useState<ToasterToast[]>([])
+  const [toasts, setToasts] = useState<ToastProps[]>([])
 
-  React.useEffect(() => {
-    function handleAdd(toast: ToasterToast) {
-      setToasts((prev) => [...prev, toast].slice(-TOAST_LIMIT))
-    }
+  function toast(t: ToastProps) {
+    const id = Math.random().toString(36).substring(2)
+    setToasts((prev) => [...prev, { ...t, id }])
+  }
 
-    toastListeners.add(handleAdd)
-    return () => {
-      toastListeners.delete(handleAdd)
-    }
-  }, [])
-
-  return { toasts }
+  return { toast, toasts }
 }

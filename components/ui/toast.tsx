@@ -1,17 +1,15 @@
 "use client"
 
 import * as React from "react"
-import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-4 pr-6 shadow-lg transition-all data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "pointer-events-auto relative flex w-full items-center space-x-4 rounded-md border p-4 shadow-md",
   {
     variants: {
       variant: {
-        default: "bg-white text-black border",
+        default: "bg-white text-black border-gray-200",
         destructive: "bg-red-600 text-white border-red-700",
       },
     },
@@ -21,65 +19,25 @@ const toastVariants = cva(
   }
 )
 
-const ToastProvider = ToastPrimitives.Provider
-const ToastViewport = ToastPrimitives.Viewport
+export interface ToastProps extends VariantProps<typeof toastVariants> {
+  id?: string
+  title?: string
+  description?: string
+}
 
-const Toast = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => (
-  <ToastPrimitives.Root
-    ref={ref}
-    className={cn(toastVariants({ variant }), className)}
-    {...props}
-  />
-))
-Toast.displayName = ToastPrimitives.Root.displayName
+export function Toast({ id, title, description, variant }: ToastProps) {
+  return (
+    <div className={toastVariants({ variant })}>
+      <div className="flex flex-col">
+        {title && <p className="font-semibold">{title}</p>}
+        {description && <p className="text-sm">{description}</p>}
+      </div>
+    </div>
+  )
+}
 
-const ToastTitle = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Title>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={cn("text-sm font-semibold", className)}
-    {...props}
-  />
-))
-ToastTitle.displayName = ToastPrimitives.Title.displayName
-
-const ToastDescription = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Description>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description
-    ref={ref}
-    className={cn("text-sm opacity-90", className)}
-    {...props}
-  />
-))
-ToastDescription.displayName = ToastPrimitives.Description.displayName
-
-const ToastClose = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Close>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Close
-    ref={ref}
-    className={cn("absolute right-1 top-1 opacity-50 hover:opacity-100", className)}
-    {...props}
-  >
-    <X className="h-4 w-4" />
-  </ToastPrimitives.Close>
-))
-ToastClose.displayName = ToastPrimitives.Close.displayName
-
-export {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
+export function ToastViewport() {
+  return (
+    <div className="fixed bottom-4 right-4 flex flex-col space-y-2 z-50" />
+  )
 }
